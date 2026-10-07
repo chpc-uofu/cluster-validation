@@ -2,7 +2,7 @@
 
 The subdirectories contain SLURM script and template HPL input file to submit HPL job to validate whole sections of clusters after the downtime.
 
-Every partition directory includes a `submit.sh` symbolic link to the shared wrapper. It determines the idle-node count and, when possible, selects an active reservation that Slurm confirms is usable for the exact submission. Each run must be launched from its own directory because the `HPL.dat` input file is generated in the working directory.
+Every partition directory includes symbolic links to the shared `submit.sh` wrapper and `HPL.dat.tpl` template. The wrapper determines the idle-node count and, when possible, selects an active reservation that Slurm confirms is usable for the exact submission. Each run must be launched from its own directory because the `HPL.dat` input file is generated in the working directory.
 
 ```
 (cd np_guest && ./submit.sh)
