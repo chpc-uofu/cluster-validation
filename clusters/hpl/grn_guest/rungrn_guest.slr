@@ -1,0 +1,61 @@
+#!/bin/bash
+#SBATCH -J HPL_test_grn_guest
+#SBATCH --ntasks-per-node=96
+#SBATCH -p granite-guest
+#SBATCH --qos=granite-guest
+#SBATCH --exclusive
+#SBATCH --mem=0
+#SBATCH -o grn-guest-%j.out
+#SBATCH -e grn-guest-%j.err
+#SBATCH -t 0-8:00
+
+# This script runs HPL across available Granite guest CPU nodes. Submit with
+# an account available on Granite, for example: sbatch -A <account> -N <nodes> rungrn_guest.slr
+
+module purge
+module load gcc/8.5.0 openmpi/4.1.3 hpl
+
+MPI_PROC_NUM=$SLURM_NTASKS
+
+# Granite CPU nodes provide 746 GB usable memory. Keep the benchmark within
+# the smallest node size so a mixed-node allocation is safe.
+MEM=746
+SIZE=50
+NB=192
+
+words=$((SLURM_JOB_NUM_NODES*MEM*1024*1024*1024/8))
+
+if [ ! -v P ]; then
+  P=$(echo "scale=0;sqrt($MPI_PROC_NUM)" | bc)
+  Q=$((MPI_PROC_NUM/P))
+  while [ $((P*Q)) -ne $MPI_PROC_NUM ]; do
+    P=$((P-1))
+    Q=$((MPI_PROC_NUM/P))
+  done
+fi
+
+# N must be a multiple of NB and the least common multiple of P and Q.
+A=$P
+B=$Q
+R=1
+while [ $R -ne 0 ]; do
+  if [ $A -gt $B ]; then
+    R=$(( A % B ))
+    if [ $R -ne 0 ]; then A=$R; else GCD=$B; fi
+  else
+    R=$(( B % A ))
+    if [ $R -ne 0 ]; then B=$R; else GCD=$A; fi
+  fi
+done
+
+LCM=$(( P * Q / GCD ))
+N=$(echo "scale=0;sqrt($words*$SIZE/100)/($LCM*$NB)" | bc)
+N=$((N*LCM*NB))
+
+cp HPL.dat.tpl HPL.dat
+sed "s/%NB%/$NB/" -i HPL.dat
+sed "s/%N%/$N/" -i HPL.dat
+sed "s/%P%/$P/" -i HPL.dat
+sed "s/%Q%/$Q/" -i HPL.dat
+
+mpirun -n $SLURM_NTASKS xhpl

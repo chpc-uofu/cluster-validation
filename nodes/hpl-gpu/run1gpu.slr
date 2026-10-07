@@ -7,11 +7,10 @@
 #SBATCH -o %N-%j.out # name of the stdout
 #SBATCH -e %N-%j.err # name of the stderr
 ##SBATCH --reservation=downtime-2022-12-06
-#SBATCH -t 0-1:00 # 2 hours (D-HH:MM) 
+#SBATCH -t 0-1:00 # 1 hour (D-HH:MM)
 
-# this script runs HPL on all NP general nodes that are available
-# find out how many nodes are available and put it to the -N flag
-# the script should figure out the rest to run HPL on 32 tasks per node 
+# this script runs HPL on a single allocated GPU node
+# the script should determine the remaining HPL parameters from the allocation
 
 module purge
 module load singularity
@@ -38,4 +37,3 @@ cp HPL.dat.tpl HPL.dat
 sed "s/%N%/$N/" -i HPL.dat
 
 singularity exec --nv hpc-benchmarks:21.4-hpl.sif mpirun -np 1 xhpl
-
