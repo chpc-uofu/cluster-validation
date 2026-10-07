@@ -7,6 +7,8 @@ Every partition directory includes symbolic links to the shared `submit.sh` wrap
 ```
 (cd np_guest && ./submit.sh)
 (cd np_gen && ./submit.sh)
+(cd rw_guest && ./submit.sh)
+(cd rw_gen && ./submit.sh)
 (cd kp_guest && ./submit.sh)
 (cd kp_gen && ./submit.sh)
 (cd lp_guest && ./submit.sh)
@@ -15,7 +17,7 @@ Every partition directory includes symbolic links to the shared `submit.sh` wrap
 (cd grn_gen && ./submit.sh)
 ```
 
-Additional `sbatch` options can follow the command, for example `./submit.sh --time=4:00:00`. General partitions submit with `--account=chpc`; the Notchpeak, Kingspeak, and Lonepeak guest partitions use `--account=owner-guest`. The Granite general wrapper submits with `--partition=granite --qos=granite --account=chpc`; the Granite guest wrapper submits with `--partition=granite-guest --qos=granite-guest --account=chpc`. Unlike the other wrappers, Granite requires its QoS to be supplied explicitly. The wrapper only applies a reservation after `sbatch --test-only` confirms it is active, matches the partition, and is usable by the submitter and account for the request.
+Additional `sbatch` options can follow the command, for example `./submit.sh --time=4:00:00`. General partitions submit with `--account=chpc`; the Notchpeak, Redwood, Kingspeak, and Lonepeak guest partitions use `--account=owner-guest`. The Granite general wrapper submits with `--partition=granite --qos=granite --account=chpc`; the Granite guest wrapper submits with `--partition=granite-guest --qos=granite-guest --account=chpc`. Unlike the other wrappers, Granite requires its QoS to be supplied explicitly. The wrapper only applies a reservation after `sbatch --test-only` confirms it is active, matches the partition, and is usable by the submitter and account for the request.
 
 Upon successful completion, the `.err` file should be empty and the `.out` file should contain HPL output, e.g.
 ```

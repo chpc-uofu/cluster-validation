@@ -16,6 +16,14 @@ case "$profile" in
     partition=notchpeak
     account=chpc
     ;;
+  rw_guest)
+    partition=redwood-guest
+    account=owner-guest
+    ;;
+  rw_gen)
+    partition=redwood
+    account=chpc
+    ;;
   kp_guest)
     partition=kingspeak-guest
     account=owner-guest
