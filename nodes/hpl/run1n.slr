@@ -3,6 +3,8 @@
 #SBATCH -N 1 # 
 ##SBATCH -p notchpeak
 ##SBATCH -A chpc
+#SBATCH --exclusive
+#SBATCH --mem=0
 #SBATCH -o %N-%j.out # name of the stdout
 #SBATCH -e %N-%j.err # name of the stderr
 ##SBATCH --reservation=downtime-2022-12-06

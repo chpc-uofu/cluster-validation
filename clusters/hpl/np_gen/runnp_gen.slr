@@ -4,6 +4,8 @@
 #SBATCH --ntasks-per-node=32
 #SBATCH -p notchpeak
 #SBATCH -A chpc
+#SBATCH --exclusive
+#SBATCH --mem=0
 #SBATCH -o np-gen-%j.out # name of the stdout
 #SBATCH -e np-gen-%j.err # name of the stderr
 ##SBATCH --reservation=downtime-2022-12-06
