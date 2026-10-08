@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH -J HPL_test_np_guest
+#SBATCH -J HPL_test_rw_gen
 #SBATCH --ntasks-per-node=32
-#SBATCH -p notchpeak-guest
-#SBATCH -A owner-guest
+#SBATCH -p redwood
+#SBATCH -A chpc
 #SBATCH --exclusive
 #SBATCH --mem=0
-#SBATCH -o np-guest-%j.out
-#SBATCH -e np-guest-%j.err
+#SBATCH -o rw-gen-%j.out
+#SBATCH -e rw-gen-%j.err
 #SBATCH -t 0-8:00
 
 module purge

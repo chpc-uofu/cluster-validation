@@ -2,24 +2,24 @@
 
 The subdirectories contain SLURM script and template HPL input file to submit HPL job to validate whole sections of clusters after the downtime.
 
-Each SLURM script needs have one input parameter - number of nodes on the partition to test. This can be obtained by running the `sinfo` command. Each cluster is divided into two partitions - general and owner. Below is the list of commands to start the validation runs on all the clusters. Note that each run must be in its unique directory (the HPL.dat input file is unique).
+Every partition directory includes symbolic links to the shared `submit.sh` wrapper and `HPL.dat.tpl` template. The wrapper determines the idle-node count and, when possible, selects an active reservation that Slurm confirms is usable for the exact submission. Each run must be launched from its own directory because the `HPL.dat` input file is generated in the working directory.
 
 ```
-sbatch -N `sinfo -p notchpeak-guest | grep idle | awk '{ print $4 }'` runnp_guest.slr
-sbatch -N `sinfo -p notchpeak | grep idle | awk '{ print $4 }'` runnp_gen.slr 
-sbatch -N `sinfo -p kingspeak-guest | grep idle | awk '{ print $4 }'` runkp_guest.slr
-sbatch -N `sinfo -p kingspeak | grep idle | awk '{ print $4 }'` runkp_gen.slr
-sbatch -N `sinfo -p liu-lp | grep idle | awk '{ print $4 }'` runlp_guest.slr
-sbatch -N `sinfo -p lonepeak | grep idle | awk '{ print $4 }'` runlp_gen.slr 
-sbatch -N `sinfo -p ash-guest | grep idle | awk '{ print $4 }'` runash.slr
+(cd np_guest && ./submit.sh)
+(cd np_gen && ./submit.sh)
+(cd rw_guest && ./submit.sh)
+(cd rw_gen && ./submit.sh)
+(cd kp_guest && ./submit.sh)
+(cd kp_gen && ./submit.sh)
+(cd lp_guest && ./submit.sh)
+(cd lp_gen && ./submit.sh)
+(cd grn_guest && ./submit.sh)
+(cd grn_gen && ./submit.sh)
 ```
 
-Note, that if there is an active reservation, the `--reservation` option needs to come before the SLURM script, e.g.
-```
-sbatch --reservation=downtime-2022-12-06 -N `sinfo -p ash-guest | grep idle | awk '{ print $4 }'` runash.slr
-```
+Additional `sbatch` options can follow the command, for example `./submit.sh --time=4:00:00`. General partitions submit with `--account=chpc`; the Notchpeak, Redwood, Kingspeak, and Lonepeak guest partitions use `--account=owner-guest`. The Granite general wrapper submits with `--partition=granite --qos=granite --account=chpc`; the Granite guest wrapper submits with `--partition=granite-guest --qos=granite-guest --account=chpc`. Unlike the other wrappers, Granite requires its QoS to be supplied explicitly. The wrapper only applies a reservation after `sbatch --test-only` confirms it is active, matches the partition, and is usable by the submitter and account for the request.
 
-Upon valid completion of the run, the `.err` file should be empty, and the `.out` file will have a correct HPL output, e.g. 
+Upon successful completion, the `.err` file should be empty and the `.out` file should contain HPL output, e.g.
 ```
 ================================================================================
 T/V                N    NB     P     Q               Time                 Gflops
