@@ -1,31 +1,23 @@
 #!/bin/bash
-#SBATCH -J HPL_test_np_guest # A single job name for the array 
-##SBATCH -N 58 # All tasks on one machine 
+#SBATCH -J HPL_test_np_guest
 #SBATCH --ntasks-per-node=32
 #SBATCH -p notchpeak-guest
 #SBATCH -A owner-guest
 #SBATCH --exclusive
 #SBATCH --mem=0
-#SBATCH -o np-guest-%j.out # name of the stdout
-#SBATCH -e np-guest-%j.err # name of the stderr
-##SBATCH --reservation=downtime-2022-12-06
-#SBATCH -t 0-8:00 # 8 hours (D-HH:MM)
-
-# this script runs HPL on all NP guest nodes that are available
-# find out how many nodes are available and put it to the -N flag
-# the script should determine the remaining HPL parameters from the allocation
+#SBATCH -o np-guest-%j.out
+#SBATCH -e np-guest-%j.err
+#SBATCH -t 0-8:00
 
 module purge
 module load gcc/8.5.0  openmpi/4.1.3 hpl
 
 MPI_PROC_NUM=$SLURM_NTASKS
 
-# Memory per node in GB
 if [ ! -v MEM ]; then
   MEM=$(free -g | awk '/Mem:/ {print $2}')
 fi
 
-# memory size per node
 MEM=64
 # % of memory size for the run
 SIZE=50
